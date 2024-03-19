@@ -17,7 +17,7 @@ export const Login = () => {
   const { isAuth, errors, isLoading } = useSelector(loginSelector);
 
   const handleSubmit = (values) => {
-      
+      dispatch(loginThunk(values))
       loginThunk(dispatch, values);
   };
   if (isAuth) return <Navigate to={ROUTE_NAMES.HOME}/>;

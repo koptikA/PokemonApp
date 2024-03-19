@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import "./Header.css";
 import { ROUTE_NAMES } from "../../routes/routeNames";
 import { Button } from "react-bootstrap";
-import { logoutAction } from "../../pages/login/actions";
 import { useDispatch } from "react-redux";
+import { logout } from "../../pages/login/slices";
 
 
 
@@ -17,7 +17,7 @@ export const Header = () => {
                 products
             </Link>
             
-            <Button variant={"danger"} onClick={() => dispatch(logoutAction())}>
+            <Button variant={"danger"} onClick={() => dispatch(logout())}>
                 Выйти
             </Button>        
  
