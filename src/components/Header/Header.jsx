@@ -1,19 +1,25 @@
 import React from "react";
-import "./Header.css";
-
 import { Link } from "react-router-dom";
-import { MyContext } from "../../customRedux/CustomRedux";
+import "./Header.css";
+import { ROUTE_NAMES } from "../../routes/routeNames";
+import { Button } from "react-bootstrap";
+import { logoutAction } from "../../pages/login/actions";
+import { useDispatch } from "react-redux";
 
 
 
 export const Header = () => {
-    
+    const dispatch = useDispatch()
+      
     return (
         <div className="header">
-            <Link className="header-link" to={"/"}>
-                home page
+            <Link className="header-link" to={ROUTE_NAMES.PRODUCTS}>
+                products
             </Link>
             
+            <Button variant={"danger"} onClick={() => dispatch(logoutAction())}>
+                Выйти
+            </Button>        
  
         </div>
     );    

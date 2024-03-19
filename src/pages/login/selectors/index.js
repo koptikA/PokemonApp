@@ -1,1 +1,1 @@
-export const loginSelector = (state) => state.loginPage
+export const loginSelector = (state) => state.loginPage;

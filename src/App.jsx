@@ -1,14 +1,10 @@
-
-import { useContext } from 'react';
 import './App.css'
-import { MyContext } from './customRedux/CustomRedux';
+import { Header } from "./components/Header/Header";
 
-function App({ children }) { 
-  const { store } = useContext(MyContext);
-  console.log(store);
-  
+function App({ children }) {    
   return (
       <div className="App">
+                    
         {children}
            
       </div>

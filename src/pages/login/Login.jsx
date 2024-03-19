@@ -1,85 +1,74 @@
-import React, { useContext, useState } from "react"
-import { Form, Modal, Spinner } from "react-bootstrap";
+import React from "react"
+import { Modal, Spinner } from "react-bootstrap";
 import {  Navigate } from "react-router-dom";
-
-import { MyContext } from "../../customRedux/CustomRedux";
 import { Button } from "../../components/UI/Button";
+import { initialValues } from "../login/initialValues"
 
 import { loginSelector } from "./selectors";
 import { ROUTE_NAMES } from "../../routes/routeNames";
-import AuthService from "../../services/AuthService";
-import { loginFail, loginLoading, loginSuccess } from "./actions/index";
-
+import { loginThunk } from "../login/thunks";
+import { Field, Formik } from "formik";
+import { validationSchema } from "./validation";
+import { FormikField } from "../../components/FormikField/FormikField";
+import { useDispatch, useSelector } from "react-redux";
 
 export const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch = useDispatch()
+  const { isAuth, errors, isLoading } = useSelector(loginSelector);
 
-  const { store, dispatch } = useContext(MyContext);
-  const { isAuth, errors, isLoading } = loginSelector(store);
-
-  const handleSubmit = () => {
-    dispatch(loginLoading())
-    AuthService.login({
-      email: email,
-      password: password,
-    })
-    
-      .then((response) => {
-        dispatch(loginSuccess(response))
-       
-      })
-      .catch(({response}) => {
-        dispatch(loginFail(response?.data?.message))
-      });
+  const handleSubmit = (values) => {
+      
+      loginThunk(dispatch, values);
   };
-
   if (isAuth) return <Navigate to={ROUTE_NAMES.HOME}/>;
-
   return (
-      <div className="login">
-        <Modal show={true} >
-            <Modal.Header >
-              <Modal.Title>Войдите в систему</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-            <Form.Group 
-                className="mb-3" 
-                controlId="exampleForm.ControlInput1"
-              >
-                <Form.Label>Email</Form.Label>
-                <Form.Control 
-                type="email" 
-                placeholder="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)} 
+    <div className="login">
+      <Formik 
+        initialValues={initialValues} 
+        onSubmit={handleSubmit}
+        validationSchema={validationSchema}
+      >
+        {(formikProps) => {
+          return (
+            <Modal show={true} >
+              <Modal.Header >
+                <Modal.Title>Войдите в систему</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Field 
+                  component={FormikField} 
+                  type="email" 
+                  placeholder="email" 
+                  name="email"
+                  label="Email"
                 />
-              </Form.Group>
 
-              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Password</Form.Label>
-                <Form.Control 
-                type="password" 
-                placeholder="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}  
+                <Field 
+                  component={FormikField} 
+                  type="password" 
+                  placeholder="password" 
+                  name="password"
+                  label="Password" 
                 />
-              </Form.Group>
 
-              <div className="form-error-message">{errors}</div>          
+                <div className="form-error-message">{errors}</div>          
 
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                disabled={isLoading}
-                variant="success" 
-                onClick={handleSubmit}
-                >
-                {isLoading ? <Spinner animation="border" /> : "Войти"}
-              </Button>
-            </Modal.Footer>
-        </Modal>
-      </div>
+              </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    disabled={isLoading || !formikProps.isValid}
+                    variant="success" 
+                    onClick={formikProps.handleSubmit}
+                    >
+                    {isLoading ? <Spinner animation="border" /> : "Войти"}
+                  </Button>
+                </Modal.Footer>
+            </Modal>
+          )}
+        }  
+      </Formik>
+              
+    </div>
   );
 };
 

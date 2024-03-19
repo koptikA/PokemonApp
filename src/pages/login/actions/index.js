@@ -9,7 +9,7 @@ export const loginLoading = () => {
 export const loginSuccess = (data) => {
     return {
         type: ACTION_TYPES.LOGIN_SUCCESS,
-        payload: data,
+        payload: data.data,
     };
 };
 
